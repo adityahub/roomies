@@ -10,11 +10,11 @@
   <a-scene>
     <!-- Asset management system -->
     <a-assets>
-      <video id="floorVideo" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
-      <video id="wallVideo1" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
-      <video id="wallVideo2" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
-      <video id="wallVideo3" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
-      <video id="wallVideo4" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
+      <video id="floorVideo" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" crossorigin="anonymous"></video>
+      <video id="wallVideo1" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" crossorigin="anonymous"></video>
+      <video id="wallVideo2" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" crossorigin="anonymous"></video>
+      <video id="wallVideo3" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" crossorigin="anonymous"></video>
+      <video id="wallVideo4" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" crossorigin="anonymous"></video>
     </a-assets>
 
     <!-- Floor -->
@@ -25,6 +25,24 @@
     <a-video src="#wallVideo2" width="10" height="10" position="5 5 0" rotation="0 -90 0"></a-video>
     <a-video src="#wallVideo3" width="10" height="10" position="-5 5 0" rotation="0 90 0"></a-video>
     <a-video src="#wallVideo4" width="10" height="10" position="0 5 5" rotation="0 180 0"></a-video>
+
+    <!-- User interaction to start videos -->
+    <a-entity position="0 1.6 -3">
+      <a-plane id="playButton" color="#4CC3D9" width="2" height="1" text="value: Start Videos; align: center" material="shader: flat"></a-plane>
+    </a-entity>
+
+    <a-entity camera look-controls></a-entity>
   </a-scene>
+
+  <script>
+    document.querySelector('#playButton').addEventListener('click', function () {
+      const videos = ['floorVideo', 'wallVideo1', 'wallVideo2', 'wallVideo3', 'wallVideo4'];
+      videos.forEach(videoId => {
+        const video = document.getElementById(videoId);
+        video.play();
+      });
+      this.setAttribute('visible', 'false');
+    });
+  </script>
 </body>
 </html>
