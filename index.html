@@ -1,57 +1,28 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <script>
-      AFRAME.registerComponent('video-handler', {
-        init: function () {
-          var el = this.el;
-          var video = el.getAttribute('material').src;
-          
-          if (video) {
-            video.addEventListener('error', function(e) {
-              console.error('Video error:', e);
-              el.setAttribute('material', 'src', '#fallback-image');
-            });
-            
-            video.addEventListener('loadeddata', function() {
-              console.log('Video loaded successfully');
-            });
-          }
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Immersive Room</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/chenzlabs/aframe-video-shader/v2.0.0/dist/aframe-video-shader.min.js"></script>
+</head>
+<body>
+  <a-scene>
+    <!-- Floor -->
+    <a-video src="#floorVideo" width="10" height="10" position="0 0 -5" rotation="-90 0 0"></a-video>
 
-          el.addEventListener('click', function () {
-            if (video && video.paused) {
-              video.play().catch(function(error) {
-                console.error('Error attempting to play video:', error);
-              });
-            }
-          });
-        }
-      });
-    </script>
-  </head>
-  <body>
-    <a-scene>
-      <a-assets>
-        <video id="video" src="https://storage.googleapis.com/webfundamentals-assets/videos/chrome.webm" loop crossorigin="anonymous" muted playsinline></video>
-        <img id="fallback-image" src="https://picsum.photos/1920/1080" crossorigin="anonymous">
-      </a-assets>
+    <!-- Walls -->
+    <a-video src="#wallVideo1" width="10" height="10" position="0 5 -5" rotation="0 0 0"></a-video>
+    <a-video src="#wallVideo2" width="10" height="10" position="5 5 0" rotation="0 -90 0"></a-video>
+    <a-video src="#wallVideo3" width="10" height="10" position="-5 5 0" rotation="0 90 0"></a-video>
+    <a-video src="#wallVideo4" width="10" height="10" position="0 5 5" rotation="0 180 0"></a-video>
 
-      <!-- Floor -->
-      <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" material="src: #video" video-handler></a-plane>
-
-      <!-- Walls -->
-      <a-plane position="0 5 -10" width="20" height="10" material="src: #video" video-handler></a-plane>
-      <a-plane position="10 5 0" rotation="0 -90 0" width="20" height="10" material="src: #video" video-handler></a-plane>
-      <a-plane position="0 5 10" rotation="0 180 0" width="20" height="10" material="src: #video" video-handler></a-plane>
-      <a-plane position="-10 5 0" rotation="0 90 0" width="20" height="10" material="src: #video" video-handler></a-plane>
-
-      <!-- Camera -->
-      <a-entity position="0 1.6 0">
-        <a-camera>
-          <a-cursor></a-cursor>
-        </a-camera>
-      </a-entity>
-    </a-scene>
-  </body>
+    <!-- Video assets -->
+    <video id="floorVideo" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
+    <video id="wallVideo1" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
+    <video id="wallVideo2" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
+    <video id="wallVideo3" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
+    <video id="wallVideo4" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
+  </a-scene>
+</body>
 </html>
