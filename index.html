@@ -8,6 +8,15 @@
 </head>
 <body>
   <a-scene>
+    <!-- Asset management system -->
+    <a-assets>
+      <video id="floorVideo" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
+      <video id="wallVideo1" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
+      <video id="wallVideo2" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
+      <video id="wallVideo3" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
+      <video id="wallVideo4" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true" crossorigin="anonymous"></video>
+    </a-assets>
+
     <!-- Floor -->
     <a-video src="#floorVideo" width="10" height="10" position="0 0 -5" rotation="-90 0 0"></a-video>
 
@@ -16,13 +25,6 @@
     <a-video src="#wallVideo2" width="10" height="10" position="5 5 0" rotation="0 -90 0"></a-video>
     <a-video src="#wallVideo3" width="10" height="10" position="-5 5 0" rotation="0 90 0"></a-video>
     <a-video src="#wallVideo4" width="10" height="10" position="0 5 5" rotation="0 180 0"></a-video>
-
-    <!-- Video assets -->
-    <video id="floorVideo" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
-    <video id="wallVideo1" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
-    <video id="wallVideo2" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
-    <video id="wallVideo3" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
-    <video id="wallVideo4" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" loop="true" autoplay="true"></video>
   </a-scene>
 </body>
 </html>
