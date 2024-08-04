@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>Immersive Room</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.rawgit.com/chenzlabs/aframe-video-shader/v2.0.0/dist/aframe-video-shader.min.js"></script>
-  <script src="https://cdn.rawgit.com/aframevr/aframe/master/examples/showcase/tracked-controls/hand-tracking/bubble-generator.js"></script>
 </head>
 <body>
   <a-scene>
@@ -16,7 +14,7 @@
       <video id="wallVideo2" src="https://videos.pexels.com/video-files/5136532/5136532-hd_1920_1080_30fps.mp4" loop="true" crossorigin="anonymous"></video>
       <video id="wallVideo3" src="https://videos.pexels.com/video-files/856882/856882-hd_1920_1080_24fps.mp4" loop="true" crossorigin="anonymous"></video>
       <video id="wallVideo4" src="https://videos.pexels.com/video-files/2028111/2028111-hd_1920_1080_30fps.mp4" loop="true" crossorigin="anonymous"></video>
-      <audio id="underwaterSound" src="uw.mp3" loop="true" crossorigin="anonymous"></audio>
+      <audio id="underwaterSound" src="https://www.soundjay.com/nature/sounds/underwater-01.mp3" loop="true" crossorigin="anonymous"></audio>
     </a-assets>
 
     <!-- Floor -->
@@ -34,7 +32,7 @@
     </a-entity>
 
     <!-- Laser controls for Oculus Quest interaction -->
-    <a-entity laser-controls="hand: right" id="rightHand" raycaster="objects: .clickable" bubble-generator="hand: right"></a-entity>
+    <a-entity laser-controls="hand: right" id="rightHand" raycaster="objects: .clickable"></a-entity>
 
     <!-- Camera and sound -->
     <a-entity camera look-controls>
@@ -44,29 +42,27 @@
 
   <script>
     AFRAME.registerComponent('bubble-generator', {
-      schema: { hand: { type: 'string' } },
       init: function () {
-        const self = this;
         const el = this.el;
-        const hand = this.data.hand;
 
         el.addEventListener('triggerdown', function () {
-          self.createBubble();
+          createBubble(el);
         });
-      },
-      createBubble: function () {
-        const bubble = document.createElement('a-sphere');
-        bubble.setAttribute('radius', 0.1);
-        bubble.setAttribute('color', '#FFFFFF');
-        bubble.setAttribute('position', '0 0 -0.5');
-        bubble.setAttribute('dynamic-body', '');
-        bubble.setAttribute('velocity', '0 2 0');
 
-        this.el.sceneEl.appendChild(bubble);
+        function createBubble(el) {
+          const bubble = document.createElement('a-sphere');
+          bubble.setAttribute('radius', 0.1);
+          bubble.setAttribute('color', '#FFFFFF');
+          bubble.setAttribute('position', el.getAttribute('position'));
+          bubble.setAttribute('dynamic-body', '');
+          bubble.setAttribute('velocity', '0 2 0');
 
-        setTimeout(() => {
-          bubble.parentNode.removeChild(bubble);
-        }, 3000);
+          el.sceneEl.appendChild(bubble);
+
+          setTimeout(() => {
+            bubble.parentNode.removeChild(bubble);
+          }, 3000);
+        }
       }
     });
 
@@ -77,6 +73,11 @@
         video.play();
       });
       this.setAttribute('visible', 'false');
+
+      // Enable bubble generation on trigger press
+      const rightHand = document.getElementById('rightHand');
+      rightHand.removeAttribute('laser-controls');
+      rightHand.setAttribute('bubble-generator', '');
     });
 
     // Adding interaction with raycaster
