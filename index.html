@@ -14,7 +14,7 @@
       <video id="wallVideo2" src="https://videos.pexels.com/video-files/5136532/5136532-hd_1920_1080_30fps.mp4" loop="true" crossorigin="anonymous"></video>
       <video id="wallVideo3" src="https://videos.pexels.com/video-files/856882/856882-hd_1920_1080_24fps.mp4" loop="true" crossorigin="anonymous"></video>
       <video id="wallVideo4" src="https://videos.pexels.com/video-files/2028111/2028111-hd_1920_1080_30fps.mp4" loop="true" crossorigin="anonymous"></video>
-      <audio id="underwaterSound" src="https://www.soundjay.com/nature/sounds/underwater-01.mp3" loop="true" crossorigin="anonymous"></audio>
+      <audio id="underwaterSound" src="uw.mp3" loop="true" crossorigin="anonymous"></audio>
     </a-assets>
 
     <!-- Floor -->
@@ -51,17 +51,45 @@
 
         function createBubble(el) {
           const bubble = document.createElement('a-sphere');
-          bubble.setAttribute('radius', 0.1);
-          bubble.setAttribute('color', '#FFFFFF');
+          bubble.setAttribute('radius', 0.05);
+          bubble.setAttribute('color', '#ADD8E6'); // Light blue color
           bubble.setAttribute('position', el.getAttribute('position'));
           bubble.setAttribute('dynamic-body', '');
-          bubble.setAttribute('velocity', '0 2 0');
+
+          // Randomize initial position and velocity
+          const randomOffset = (Math.random() - 0.5) * 0.1;
+          const randomVelocity = (Math.random() - 0.5) * 0.2;
+
+          bubble.setAttribute('position', {
+            x: el.object3D.position.x + randomOffset,
+            y: el.object3D.position.y,
+            z: el.object3D.position.z + randomOffset
+          });
+
+          // Curly animation
+          bubble.setAttribute('animation__float', {
+            property: 'position',
+            to: `${el.object3D.position.x + randomVelocity} ${el.object3D.position.y + 2 + randomVelocity} ${el.object3D.position.z + randomVelocity}`,
+            dur: 3000,
+            easing: 'easeInOutSine'
+          });
+
+          // Pop animation
+          bubble.setAttribute('animation__pop', {
+            property: 'scale',
+            to: '0 0 0',
+            dur: 500,
+            startEvents: 'pop'
+          });
 
           el.sceneEl.appendChild(bubble);
 
           setTimeout(() => {
-            bubble.parentNode.removeChild(bubble);
-          }, 3000);
+            bubble.emit('pop');
+            setTimeout(() => {
+              bubble.parentNode.removeChild(bubble);
+            }, 500);
+          }, 2500);
         }
       }
     });
