@@ -4,17 +4,36 @@
   <meta charset="UTF-8">
   <title>Immersive Room</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <style>
+    #progressBar {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 30px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 5px;
+      display: none; /* Hidden by default */
+    }
+    #progress {
+      height: 100%;
+      width: 0;
+      background: #4CC3D9;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
   <a-scene>
     <!-- Asset management system -->
     <a-assets>
-      <video id="floorVideo" src="hf.mp4" loop="true" crossorigin="anonymous"></video>
-      <video id="wallVideo1" src="h1.mp4" loop="true" crossorigin="anonymous"></video>
-      <video id="wallVideo2" src="h2.mp4" loop="true" crossorigin="anonymous"></video>
-      <video id="wallVideo3" src="h4.mp4" loop="true" crossorigin="anonymous"></video>
-      <video id="wallVideo4" src="h3.mp4" loop="true" crossorigin="anonymous"></video>
-      <audio id="underwaterSound" src="FEfinal.mp3" loop="true" crossorigin="anonymous"></audio>
+      <video id="floorVideo" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/hf.mp4" loop="true" crossorigin="anonymous"></video>
+      <video id="wallVideo1" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h1.mp4" loop="true" crossorigin="anonymous"></video>
+      <video id="wallVideo2" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h2.mp4" loop="true" crossorigin="anonymous"></video>
+      <video id="wallVideo3" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h4.mp4" loop="true" crossorigin="anonymous"></video>
+      <video id="wallVideo4" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h3.mp4" loop="true" crossorigin="anonymous"></video>
+      <audio id="underwaterSound" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/FEfinal.mp3" loop="true" crossorigin="anonymous"></audio>
     </a-assets>
 
     <!-- Floor -->
@@ -38,6 +57,11 @@
     <a-entity camera look-controls>
       <a-sound src="#underwaterSound" autoplay="true" loop="true"></a-sound>
     </a-entity>
+
+    <!-- Progress bar -->
+    <div id="progressBar">
+      <div id="progress"></div>
+    </div>
   </a-scene>
 
   <script>
@@ -94,18 +118,53 @@
       }
     });
 
+    // Function to check if all videos are loaded
+    function areVideosLoaded(videos) {
+      return videos.every(videoId => {
+        const video = document.getElementById(videoId);
+        return video.readyState === 4; // HAVE_ENOUGH_DATA
+      });
+    }
+
+    // Update progress bar
+    function updateProgressBar(progress) {
+      const progressBar = document.getElementById('progress');
+      progressBar.style.width = progress + '%';
+    }
+
     document.querySelector('#playButton').addEventListener('click', function () {
       const videos = ['floorVideo', 'wallVideo1', 'wallVideo2', 'wallVideo3', 'wallVideo4'];
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.display = 'block'; // Show progress bar
+
+      let loadedCount = 0;
+
+      // Check video load status
       videos.forEach(videoId => {
         const video = document.getElementById(videoId);
-        video.play();
-      });
-      this.setAttribute('visible', 'false');
 
-      // Enable bubble generation on trigger press
-      const rightHand = document.getElementById('rightHand');
-      rightHand.removeAttribute('laser-controls');
-      rightHand.setAttribute('bubble-generator', '');
+        video.onloadeddata = () => {
+          loadedCount++;
+          const progress = Math.round((loadedCount / videos.length) * 100);
+          updateProgressBar(progress);
+
+          if (loadedCount === videos.length) {
+            // All videos are loaded
+            progressBar.style.display = 'none'; // Hide progress bar
+            videos.forEach(videoId => {
+              const video = document.getElementById(videoId);
+              video.play();
+            });
+            document.getElementById('underwaterSound').play(); // Start sound
+            this.setAttribute('visible', 'false');
+
+            // Enable bubble generation on trigger press
+            const rightHand = document.getElementById('rightHand');
+            rightHand.removeAttribute('laser-controls');
+            rightHand.setAttribute('bubble-generator', '');
+          }
+        };
+      });
     });
 
     // Adding interaction with raycaster
