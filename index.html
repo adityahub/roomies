@@ -9,12 +9,12 @@
   <a-scene>
     <!-- Asset management system -->
     <a-assets>
-      <video id="floorVideo" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/hf.mp4" loop="true" crossorigin="anonymous"></video>
-      <video id="wallVideo1" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h1.mp4" loop="true" crossorigin="anonymous"></video>
-      <video id="wallVideo2" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h2.mp4" loop="true" crossorigin="anonymous"></video>
-      <video id="wallVideo3" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h4.mp4" loop="true" crossorigin="anonymous"></video>
-      <video id="wallVideo4" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h3.mp4" loop="true" crossorigin="anonymous"></video>
-      <audio id="underwaterSound" src="https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/FEfinal.mp3" loop="true" crossorigin="anonymous"></audio>
+      <video id="floorVideo" loop="true"></video>
+      <video id="wallVideo1" loop="true"></video>
+      <video id="wallVideo2" loop="true"></video>
+      <video id="wallVideo3" loop="true"></video>
+      <video id="wallVideo4" loop="true"></video>
+      <audio id="underwaterSound" loop="true"></audio>
     </a-assets>
 
     <!-- Floor -->
@@ -41,58 +41,55 @@
   </a-scene>
 
   <script>
-    AFRAME.registerComponent('bubble-generator', {
-      init: function () {
-        const el = this.el;
+    function downloadFile(url, key, callback) {
+      const cachedFile = localStorage.getItem(key); // Check if file is cached in localStorage
 
-        el.addEventListener('triggerdown', function () {
-          createBubble(el);
-        });
-
-        function createBubble(el) {
-          const bubble = document.createElement('a-sphere');
-          bubble.setAttribute('radius', 0.05);
-          bubble.setAttribute('color', '#ADD8E6'); // Light blue color
-          bubble.setAttribute('position', el.getAttribute('position'));
-          bubble.setAttribute('dynamic-body', '');
-
-          // Randomize initial position and velocity
-          const randomOffset = (Math.random() - 0.5) * 0.1;
-          const randomVelocity = (Math.random() - 0.5) * 0.2;
-
-          bubble.setAttribute('position', {
-            x: el.object3D.position.x + randomOffset,
-            y: el.object3D.position.y,
-            z: el.object3D.position.z + randomOffset
-          });
-
-          // Curly animation
-          bubble.setAttribute('animation__float', {
-            property: 'position',
-            to: `${el.object3D.position.x + randomVelocity} ${el.object3D.position.y + 2 + randomVelocity} ${el.object3D.position.z + randomVelocity}`,
-            dur: 3000,
-            easing: 'easeInOutSine'
-          });
-
-          // Pop animation
-          bubble.setAttribute('animation__pop', {
-            property: 'scale',
-            to: '0 0 0',
-            dur: 500,
-            startEvents: 'pop'
-          });
-
-          el.sceneEl.appendChild(bubble);
-
-          setTimeout(() => {
-            bubble.emit('pop');
-            setTimeout(() => {
-              bubble.parentNode.removeChild(bubble);
-            }, 500);
-          }, 2500);
-        }
+      if (cachedFile) {
+        console.log(`Loading ${key} from local storage`);
+        callback(cachedFile);  // Use the cached file
+      } else {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'blob';
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+              const fileDataUrl = reader.result;
+              localStorage.setItem(key, fileDataUrl);  // Cache the file in local storage
+              console.log(`Caching ${key} in local storage`);
+              callback(fileDataUrl);  // Return the file data
+            };
+            reader.readAsDataURL(xhr.response);  // Convert blob to base64 data URL
+          }
+        };
+        xhr.send();
       }
-    });
+    }
+
+    function loadMedia() {
+      const videoFiles = {
+        floorVideo: "https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/hf.mp4",
+        wallVideo1: "https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h1.mp4",
+        wallVideo2: "https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h2.mp4",
+        wallVideo3: "https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h4.mp4",
+        wallVideo4: "https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/h3.mp4",
+        underwaterSound: "https://webxrbucketomoi.s3.eu-north-1.amazonaws.com/FEfinal.mp3"
+      };
+
+      Object.keys(videoFiles).forEach(videoId => {
+        const url = videoFiles[videoId];
+        const videoEl = document.getElementById(videoId);
+
+        // Download or load from cache
+        downloadFile(url, videoId, function(fileURL) {
+          videoEl.src = fileURL;  // Set the downloaded/cached file as video source
+          if (videoId === "underwaterSound") {
+            videoEl.play();  // Autoplay sound when loaded
+          }
+        });
+      });
+    }
 
     document.querySelector('#playButton').addEventListener('click', function () {
       const videos = ['floorVideo', 'wallVideo1', 'wallVideo2', 'wallVideo3', 'wallVideo4'];
@@ -108,25 +105,9 @@
       rightHand.setAttribute('bubble-generator', '');
     });
 
-    // Adding interaction with raycaster
-    document.querySelector('a-scene').addEventListener('loaded', () => {
-      const sceneEl = document.querySelector('a-scene');
-      const playButton = document.querySelector('#playButton');
+    // Load media on scene load
+    document.querySelector('a-scene').addEventListener('loaded', loadMedia);
+</script>
 
-      playButton.addEventListener('mouseenter', function () {
-        this.setAttribute('color', '#24CAFF');
-      });
-
-      playButton.addEventListener('mouseleave', function () {
-        this.setAttribute('color', '#4CC3D9');
-      });
-
-      sceneEl.querySelectorAll('.clickable').forEach(function (el) {
-        el.addEventListener('click', function () {
-          el.emit('click');
-        });
-      });
-    });
-  </script>
 </body>
 </html>
