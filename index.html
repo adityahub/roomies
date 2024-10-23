@@ -4,26 +4,6 @@
   <meta charset="UTF-8">
   <title>Immersive Room</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <style>
-    #progressBar {
-      position: absolute; /* Changed to absolute */
-      top: 0; /* Align to the top of the parent element */
-      left: 50%;
-      transform: translateX(-50%); /* Center horizontally */
-      width: 300px;
-      height: 30px;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 5px;
-      display: none; /* Hidden by default */
-      margin-top: 10px; /* Add some space above */
-    }
-    #progress {
-      height: 100%;
-      width: 0;
-      background: #4CC3D9;
-      border-radius: 5px;
-    }
-  </style>
 </head>
 <body>
   <a-scene>
@@ -49,9 +29,6 @@
     <!-- User interaction to start videos -->
     <a-entity position="0 1.6 -3">
       <a-plane id="playButton" color="#4CC3D9" width="2" height="1" text="value: Start Videos; align: center" material="shader: flat" class="clickable"></a-plane>
-      <div id="progressBar">
-        <div id="progress"></div>
-      </div>
     </a-entity>
 
     <!-- Laser controls for Oculus Quest interaction -->
@@ -117,53 +94,18 @@
       }
     });
 
-    // Function to check if all videos are loaded
-    function areVideosLoaded(videos) {
-      return videos.every(videoId => {
-        const video = document.getElementById(videoId);
-        return video.readyState === 4; // HAVE_ENOUGH_DATA
-      });
-    }
-
-    // Update progress bar
-    function updateProgressBar(progress) {
-      const progressBar = document.getElementById('progress');
-      progressBar.style.width = progress + '%';
-    }
-
     document.querySelector('#playButton').addEventListener('click', function () {
       const videos = ['floorVideo', 'wallVideo1', 'wallVideo2', 'wallVideo3', 'wallVideo4'];
-      const progressBar = document.getElementById('progressBar');
-      progressBar.style.display = 'block'; // Show progress bar
-
-      let loadedCount = 0;
-
-      // Check video load status
       videos.forEach(videoId => {
         const video = document.getElementById(videoId);
-
-        video.onloadeddata = () => {
-          loadedCount++;
-          const progress = Math.round((loadedCount / videos.length) * 100);
-          updateProgressBar(progress);
-
-          if (loadedCount === videos.length) {
-            // All videos are loaded
-            progressBar.style.display = 'none'; // Hide progress bar
-            videos.forEach(videoId => {
-              const video = document.getElementById(videoId);
-              video.play();
-            });
-            document.getElementById('underwaterSound').play(); // Start sound
-            this.setAttribute('visible', 'false');
-
-            // Enable bubble generation on trigger press
-            const rightHand = document.getElementById('rightHand');
-            rightHand.removeAttribute('laser-controls');
-            rightHand.setAttribute('bubble-generator', '');
-          }
-        };
+        video.play();
       });
+      this.setAttribute('visible', 'false');
+
+      // Enable bubble generation on trigger press
+      const rightHand = document.getElementById('rightHand');
+      rightHand.removeAttribute('laser-controls');
+      rightHand.setAttribute('bubble-generator', '');
     });
 
     // Adding interaction with raycaster
